@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTasks } from './hooks/useTasks';
-import "./style/style.css"; // Tu archivo de estilos
+import "./style/style.css"; 
 
 function App() {
   const { 
