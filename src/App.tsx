@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Combina ambos aquí
 import { useTasks } from './hooks/useTasks';
 import './App.css';
+import "./style/style.css";
 
 function App() {
   const { 
