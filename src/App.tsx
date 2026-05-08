@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTasks } from './hooks/useTasks';
+import { useState, useEffect } from 'react';
 import './App.css';
 
+import "./style/style.css"
 function App() {
   const { 
     tasks, filter, setFilter, searchTerm, setSearchTerm, 
