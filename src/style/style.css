@@ -1,0 +1,173 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+/* Contenedor principal */
+.app-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+/* Dashboard de estadísticas */
+.dashboard {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  background-color: #f9fafb;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.dashboard p {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Formulario de tareas */
+.task-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-form input, 
+.task-form select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.task-form input:focus,
+.task-form select:focus {
+  border-color: #007bff;
+}
+
+.task-form button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.task-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Lista de tareas */
+.task-list {
+  list-style: none;
+}
+
+.task-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  transition: background-color 0.2s;
+}
+
+.task-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.task-list li span {
+  flex: 1;
+}
+
+/* Botones de acción de cada tarea */
+.task-list button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.task-list button:nth-child(2) {
+  background-color: #28a745;
+  color: white;
+}
+
+.task-list button:nth-child(2):hover {
+  background-color: #218838;
+}
+
+.task-list button:nth-child(3) {
+  background-color: #dc3545;
+  color: white;
+}
+
+.task-list button:nth-child(3):hover {
+  background-color: #c82333;
+}
+
+/* Colores según prioridad */
+.task-list li span {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.task-list li span::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.task-list li span::before {
+  background-color: gray;
+}
+
+.task-list li span[data-priority="alta"]::before {
+  background-color: #dc3545; /* rojo */
+}
+
+.task-list li span[data-priority="media"]::before {
+  background-color: #ffc107; /* amarillo */
+}
+
+.task-list li span[data-priority="baja"]::before {
+  background-color: #28a745; /* verde */
+}
+
+/* Progreso */
+.dashboard p:nth-child(4) {
+  color: #007bff;
+}
