@@ -5,10 +5,9 @@ export interface Task {
   title: string;
   priority: 'alta' | 'media' | 'baja';
   completed: boolean;
-  createdAt: string;
+  createdAt: string; // Aquí guardaremos fecha y hora
 }
 
-// Creamos un tipo para los filtros
 export type FilterType = 'todas' | 'pendientes' | 'completadas';
 
 export const useTasks = () => {
@@ -17,8 +16,8 @@ export const useTasks = () => {
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
 
-  // Nuevo estado para controlar el filtro actual
   const [filter, setFilter] = useState<FilterType>('todas');
+  const [searchTerm, setSearchTerm] = useState(''); // Estado para el buscador
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -30,19 +29,21 @@ export const useTasks = () => {
       title,
       priority,
       completed: false,
-      createdAt: new Date().toISOString()
+      // Registra fecha y hora exacta en formato legible
+      createdAt: new Date().toLocaleString('es-PE', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      })
     };
-    setTasks(prev => [...prev, newTask]);
+    setTasks(prev => [newTask, ...prev]); // Las nuevas aparecen primero
   };
 
   const toggleTaskStatus = (id: string) => {
-    setTasks(prev => 
-      prev.map(task => task.id === id ? { ...task, completed: !task.completed } : task)
-    );
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
   const deleteTask = (id: string) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
+    setTasks(prev => prev.filter(t => t.id !== id));
   };
 
   const getStats = () => {
@@ -53,17 +54,23 @@ export const useTasks = () => {
     return { total, completed, urgent, progress };
   };
 
-  // Lógica de filtrado dinámico
+  // --- LÓGICA DE FILTRADO + BUSCADOR ---
   const filteredTasks = tasks.filter(task => {
-    if (filter === 'pendientes') return !task.completed;
-    if (filter === 'completadas') return task.completed;
-    return true; // 'todas'
+    const matchesFilter = 
+      filter === 'todas' ? true : 
+      filter === 'pendientes' ? !task.completed : task.completed;
+    
+    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesFilter && matchesSearch;
   });
 
   return { 
-    tasks: filteredTasks, // Ahora devolvemos las tareas ya filtradas
-    filter,
-    setFilter,
+    tasks: filteredTasks, 
+    filter, 
+    setFilter, 
+    searchTerm, 
+    setSearchTerm, 
     addTask, 
     toggleTaskStatus, 
     deleteTask, 
