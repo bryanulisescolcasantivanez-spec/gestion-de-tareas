@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTasks } from './hooks/useTasks';
-import './App.css'; // Aquí tu UI/UX Designer pondrá la magia visual
 
-import "./style/style.css"
+import "./style/style.css";
 function App() {
   // 1. Extraemos tu lógica impecable del Custom Hook
   const { tasks, addTask, toggleTaskStatus, deleteTask, getStats } = useTasks();
