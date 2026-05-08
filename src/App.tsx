@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import { useTasks } from './hooks/useTasks';
-import './App.css';
+import './App.css'; // Aquí tu UI/UX Designer pondrá la magia visual
 
+import "./style/style.css"
 function App() {
-  // Ahora extraemos también filter y setFilter
-  const { tasks, filter, setFilter, addTask, toggleTaskStatus, deleteTask, getStats } = useTasks();
+  // 1. Extraemos tu lógica impecable del Custom Hook
+  const { tasks, addTask, toggleTaskStatus, deleteTask, getStats } = useTasks();
 
   const [taskTitle, setTaskTitle] = useState('');
   const [taskPriority, setTaskPriority] = useState<'alta' | 'media' | 'baja'>('media');
-  
-  // PASO A: El estado del buscador (Tu responsabilidad)
-  const [searchTerm, setSearchTerm] = useState('');
 
+  // 3. Extraemos las estadísticas para el Dashboard
   const stats = getStats();
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (taskTitle.trim() === '') return;
+    e.preventDefault(); // Evita que la página se recargue
+    if (taskTitle.trim() === '') return; // Validación básica
+
     addTask(taskTitle, taskPriority);
     setTaskTitle('');
   };
@@ -32,17 +32,7 @@ function App() {
         <p>Progreso: {stats.progress}%</p>
       </section>
 
-      {/* PASO B: El Input del Buscador (Tu responsabilidad) */}
-      <section className="search-bar">
-        <input 
-          type="text" 
-          placeholder="🔍 Buscar tarea por nombre..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-      </section>
-
+      {/* --- FORMULARIO DE CREACIÓN --- */}
       <form onSubmit={handleSubmit} className="task-form">
         <input 
           type="text" 
@@ -61,28 +51,7 @@ function App() {
         <button type="submit">Agregar Tarea</button>
       </form>
 
-      
-      <div className="filters">
-        <button 
-          className={filter === 'todas' ? 'active' : ''}
-          onClick={() => setFilter('todas')}
-        >
-          Todas
-        </button>
-        <button 
-          className={filter === 'pendientes' ? 'active' : ''}
-          onClick={() => setFilter('pendientes')}
-        >
-          Pendientes
-        </button>
-        <button 
-          className={filter === 'completadas' ? 'active' : ''}
-          onClick={() => setFilter('completadas')}
-        >
-          Completadas
-        </button>
-      </div>
-
+      {/* --- LISTA DE TAREAS --- */}
       <ul className="task-list">
         {/* PASO C: Filtrado dinámico (Tu responsabilidad) */}
         {tasks
