@@ -11,61 +11,53 @@ function App() {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskPriority, setTaskPriority] = useState<'alta' | 'media' | 'baja'>('media');
   
-  // --- LÓGICA DE TEMA (Oscuro / Claro) ---
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
+  // Lógica de Modo Oscuro integrada
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-    }
+    document.body.className = darkMode ? 'dark-theme' : 'light-theme';
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   const stats = getStats();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (taskTitle.trim() === '') return;
+    if (!taskTitle.trim()) return;
     addTask(taskTitle, taskPriority);
     setTaskTitle('');
   };
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Gestión de Tareas</h1>
-        <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
-          {darkMode ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+    <div className="main-layout">
+      <header className="app-header">
+        <h1>Gestor de Tareas AI</h1>
+        <button className="btn-theme" onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? '🌙 Dark' : '☀️ Light'}
         </button>
       </header>
 
-      {/* --- DASHBOARD --- */}
-      <section className="dashboard">
-        <div className="stat-card"><span>Total</span> <strong>{stats.total}</strong></div>
-        <div className="stat-card"><span>Progreso</span> <strong>{stats.progress}%</strong></div>
-        <div className="stat-card urgent"><span>Urgentes</span> <strong>{stats.urgent}</strong></div>
-      </section>
-
-      {/* --- BUSCADOR --- */}
-      <div className="search-bar">
-        <input 
-          type="text" 
-          placeholder="🔍 Buscar tarea..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* DASHBOARD */}
+      <div className="stats-grid">
+        <div className="card"><h3>Total</h3><p>{stats.total}</p></div>
+        <div className="card"><h3>Progreso</h3><p>{stats.progress}%</p></div>
+        <div className="card urgent"><h3>Urgentes</h3><p>{stats.urgent}</p></div>
       </div>
 
-      {/* --- FORMULARIO --- */}
-      <form onSubmit={handleSubmit} className="task-form">
+      {/* BUSCADOR */}
+      <input 
+        className="search-input"
+        type="text" 
+        placeholder="Buscar tarea..." 
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+      {/* FORMULARIO */}
+      <form className="task-input-group" onSubmit={handleSubmit}>
         <input 
-          type="text" placeholder="Nueva tarea..." 
-          value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)}
+          type="text" placeholder="¿Qué hay que hacer?" 
+          value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} 
         />
         <select value={taskPriority} onChange={(e) => setTaskPriority(e.target.value as any)}>
           <option value="alta">Alta</option>
@@ -75,35 +67,30 @@ function App() {
         <button type="submit">Añadir</button>
       </form>
 
-      {/* --- FILTROS --- */}
-      <nav className="filters">
+      {/* FILTROS */}
+      <div className="filter-tabs">
         {(['todas', 'pendientes', 'completadas'] as const).map(f => (
-          <button 
-            key={f} 
-            className={filter === f ? 'active' : ''} 
-            onClick={() => setFilter(f)}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+          <button key={f} className={filter === f ? 'active' : ''} onClick={() => setFilter(f)}>
+            {f}
           </button>
         ))}
-      </nav>
+      </div>
 
-      {/* --- LISTA --- */}
-      <ul className="task-list">
-        {tasks.map((task) => (
-          <li key={task.id} className={`task-item ${task.priority}`}>
-            <div className="task-info">
-              <span className={`status-dot ${task.completed ? 'done' : ''}`} 
-                    onClick={() => toggleTaskStatus(task.id)} />
+      {/* LISTA DE TAREAS */}
+      <div className="task-container">
+        {tasks.map(task => (
+          <div key={task.id} className={`task-card ${task.priority} ${task.completed ? 'is-done' : ''}`}>
+            <div className="task-content">
+              <input type="checkbox" checked={task.completed} onChange={() => toggleTaskStatus(task.id)} />
               <div>
-                <p className={task.completed ? 'completed-text' : ''}>{task.title}</p>
-                <small>Creado: {task.createdAt}</small>
+                <h4>{task.title}</h4>
+                <small>{task.createdAt} | Prioridad: {task.priority}</small>
               </div>
             </div>
-            <button className="btn-delete" onClick={() => deleteTask(task.id)}>🗑️</button>
-          </li>
+            <button className="btn-del" onClick={() => deleteTask(task.id)}>Eliminar</button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

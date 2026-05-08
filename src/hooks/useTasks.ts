@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react';
 
+// Definición de la estructura de una tarea
 export interface Task {
   id: string;
   title: string;
   priority: 'alta' | 'media' | 'baja';
   completed: boolean;
-  createdAt: string; // Aquí guardaremos fecha y hora
+  createdAt: string; 
 }
 
 export type FilterType = 'todas' | 'pendientes' | 'completadas';
 
 export const useTasks = () => {
+  // Cargar tareas del LocalStorage al iniciar
   const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    return savedTasks ? JSON.parse(savedTasks) : [];
+    const saved = localStorage.getItem('tasks');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [filter, setFilter] = useState<FilterType>('todas');
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para el buscador
+  const [searchTerm, setSearchTerm] = useState('');
 
+  // Guardar en LocalStorage cada vez que cambien las tareas
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
@@ -29,13 +32,13 @@ export const useTasks = () => {
       title,
       priority,
       completed: false,
-      // Registra fecha y hora exacta en formato legible
+      // Registro de Fecha y Hora local
       createdAt: new Date().toLocaleString('es-PE', {
-        dateStyle: 'short',
-        timeStyle: 'short'
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
       })
     };
-    setTasks(prev => [newTask, ...prev]); // Las nuevas aparecen primero
+    setTasks(prev => [newTask, ...prev]);
   };
 
   const toggleTaskStatus = (id: string) => {
@@ -54,26 +57,17 @@ export const useTasks = () => {
     return { total, completed, urgent, progress };
   };
 
-  // --- LÓGICA DE FILTRADO + BUSCADOR ---
+  // Lógica combinada de Filtros + Buscador
   const filteredTasks = tasks.filter(task => {
     const matchesFilter = 
       filter === 'todas' ? true : 
       filter === 'pendientes' ? !task.completed : task.completed;
-    
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
     return matchesFilter && matchesSearch;
   });
 
   return { 
-    tasks: filteredTasks, 
-    filter, 
-    setFilter, 
-    searchTerm, 
-    setSearchTerm, 
-    addTask, 
-    toggleTaskStatus, 
-    deleteTask, 
-    getStats 
+    tasks: filteredTasks, filter, setFilter, searchTerm, setSearchTerm, 
+    addTask, toggleTaskStatus, deleteTask, getStats 
   };
 };
