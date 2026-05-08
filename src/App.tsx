@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTasks } from './hooks/useTasks';
 
 import "./style/style.css";
+
+;
 function App() {
   // 1. Extraemos tu lógica impecable del Custom Hook
   const { tasks, addTask, toggleTaskStatus, deleteTask, getStats } = useTasks();
@@ -21,33 +23,33 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <h1>Gestión de Tareas</h1>
+    <div className="main-layout">
+      <header className="app-header">
+        <h1>Gestor de Tareas AI</h1>
+        <button className="btn-theme" onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? '🌙 Dark' : '☀️ Light'}
+        </button>
+      </header>
 
-      <section className="dashboard">
-        <p>Total: {stats.total}</p>
-        <p>Completadas: {stats.completed}</p>
-        <p>Urgentes: {stats.urgent}</p>
-        <p>Progreso: {stats.progress}%</p>
-      </section>
+      {/* DASHBOARD */}
+      <div className="stats-grid">
+        <div className="card"><h3>Total</h3><p>{stats.total}</p></div>
+        <div className="card"><h3>Progreso</h3><p>{stats.progress}%</p></div>
+        <div className="card urgent"><h3>Urgentes</h3><p>{stats.urgent}</p></div>
+      </div>
 
       {/* --- FORMULARIO DE CREACIÓN --- */}
       <form onSubmit={handleSubmit} className="task-form">
         <input 
-          type="text" 
-          placeholder="¿Qué necesitas hacer?" 
-          value={taskTitle}
-          onChange={(e) => setTaskTitle(e.target.value)}
+          type="text" placeholder="¿Qué hay que hacer?" 
+          value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} 
         />
-        <select 
-          value={taskPriority} 
-          onChange={(e) => setTaskPriority(e.target.value as 'alta' | 'media' | 'baja')}
-        >
+        <select value={taskPriority} onChange={(e) => setTaskPriority(e.target.value as any)}>
           <option value="alta">Alta</option>
           <option value="media">Media</option>
           <option value="baja">Baja</option>
         </select>
-        <button type="submit">Agregar Tarea</button>
+        <button type="submit">Añadir</button>
       </form>
 
       {/* --- LISTA DE TAREAS --- */}

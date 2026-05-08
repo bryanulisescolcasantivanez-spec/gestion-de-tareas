@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
 
+// Definición de la estructura de una tarea
 export interface Task {
   id: string;
   title: string;
   priority: 'alta' | 'media' | 'baja';
   completed: boolean;
-  createdAt: string;
+  createdAt: string; 
 }
 
-// Creamos un tipo para los filtros
 export type FilterType = 'todas' | 'pendientes' | 'completadas';
 
 export const useTasks = () => {
+  // Cargar tareas del LocalStorage al iniciar
   const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    return savedTasks ? JSON.parse(savedTasks) : [];
+    const saved = localStorage.getItem('tasks');
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // Nuevo estado para controlar el filtro actual
   const [filter, setFilter] = useState<FilterType>('todas');
+  const [searchTerm, setSearchTerm] = useState('');
 
+  // Guardar en LocalStorage cada vez que cambien las tareas
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
@@ -30,19 +32,21 @@ export const useTasks = () => {
       title,
       priority,
       completed: false,
-      createdAt: new Date().toISOString()
+      // Registro de Fecha y Hora local
+      createdAt: new Date().toLocaleString('es-PE', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      })
     };
-    setTasks(prev => [...prev, newTask]);
+    setTasks(prev => [newTask, ...prev]);
   };
 
   const toggleTaskStatus = (id: string) => {
-    setTasks(prev => 
-      prev.map(task => task.id === id ? { ...task, completed: !task.completed } : task)
-    );
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
   const deleteTask = (id: string) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
+    setTasks(prev => prev.filter(t => t.id !== id));
   };
 
   const getStats = () => {
@@ -53,20 +57,17 @@ export const useTasks = () => {
     return { total, completed, urgent, progress };
   };
 
-  // Lógica de filtrado dinámico
+  // Lógica combinada de Filtros + Buscador
   const filteredTasks = tasks.filter(task => {
-    if (filter === 'pendientes') return !task.completed;
-    if (filter === 'completadas') return task.completed;
-    return true; // 'todas'
+    const matchesFilter = 
+      filter === 'todas' ? true : 
+      filter === 'pendientes' ? !task.completed : task.completed;
+    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
   });
 
   return { 
-    tasks: filteredTasks, // Ahora devolvemos las tareas ya filtradas
-    filter,
-    setFilter,
-    addTask, 
-    toggleTaskStatus, 
-    deleteTask, 
-    getStats 
+    tasks: filteredTasks, filter, setFilter, searchTerm, setSearchTerm, 
+    addTask, toggleTaskStatus, deleteTask, getStats 
   };
 };
